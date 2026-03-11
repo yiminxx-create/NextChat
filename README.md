@@ -1,3 +1,4 @@
+​🚀 Get your Access Code here: [https://yiminspire45.gumroad.com/l/nextchatcode]
 <div align="center">
 
 <a href='https://nextchat.club'>
