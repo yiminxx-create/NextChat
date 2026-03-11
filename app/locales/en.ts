@@ -27,9 +27,9 @@ const en: LocaleType = {
     Confirm: "Confirm",
     Later: "Later",
     SaasTips: "Too Complex, Use Immediately Now",
-    TopTips:
-      "🥳 Limited Offer: $5 for 10M DeepSeek Tokens!  },
-  ChatItem: {
+    TopTips: "🥳 Limited Offer: $5 for 10M DeepSeek Tokens!",
+    },
+    ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
   },
   Chat: {
