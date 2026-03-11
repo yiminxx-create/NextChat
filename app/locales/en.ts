@@ -21,15 +21,14 @@ const en: LocaleType = {
   Auth: {
     Return: "Return",
     Title: "Need Access Code",
-    Tips: "Please enter access code below",
+    Tips: "Please enter access code to start. No code? [Click here to get one]",
     SubTips: "Or enter your OpenAI or Google API Key",
     Input: "access code",
     Confirm: "Confirm",
     Later: "Later",
     SaasTips: "Too Complex, Use Immediately Now",
     TopTips:
-      "🥳 NextChat AI launch promotion: Instantly unlock the latest models like OpenAI o1, GPT-4o, Claude-3.5!",
-  },
+      "🥳 Limited Offer: $5 for 10M DeepSeek Tokens!  },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
   },
