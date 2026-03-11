@@ -21,7 +21,7 @@ const en: LocaleType = {
   Auth: {
     Return: "Return",
     Title: "Need Access Code",
-    Tips: "Please enter access code to start. No code? [Click here to get one]",
+    Tips: "Please enter access code to start. No code? [https://yiminspire45.gumroad.com/l/nextchatcode]",
     SubTips: "Or enter your OpenAI or Google API Key",
     Input: "access code",
     Confirm: "Confirm",
