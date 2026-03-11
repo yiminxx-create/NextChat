@@ -27,7 +27,7 @@ const nextConfig = {
 
     return config;
   },
-  output: mode,
+  output: 'export',
   images: {
     unoptimized: mode === "export",
   },
