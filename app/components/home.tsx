@@ -94,7 +94,7 @@ export function Home() {
           <p className="text-center text-gray-600 mt-6 text-lg">
             没有激活码？{' '}
             <a
-              href="你的 Gumroad 链接"
+              href="https://yiminspire45.gumroad.com/l/nextchatcode"
               target="_blank"
               className="text-blue-600 font-bold hover:text-blue-800 underline"
             >
