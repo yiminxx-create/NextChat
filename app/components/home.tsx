@@ -1,272 +1,108 @@
-"use client";
+// components/home.tsx (或直接替换 page.tsx 的 return)
+'use client';
 
-require("../polyfill");
-
-import { useEffect, useState } from "react";
-import styles from "./home.module.scss";
-
-import BotIcon from "../icons/bot.svg";
-import LoadingIcon from "../icons/three-dots.svg";
-
-import { getCSSVar, useMobileScreen } from "../utils";
-
-import dynamic from "next/dynamic";
-import { Path, SlotID } from "../constant";
-import { ErrorBoundary } from "./error";
-
-import { getISOLang, getLang } from "../locales";
-
-import {
-  HashRouter as Router,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
-import { SideBar } from "./sidebar";
-import { useAppConfig } from "../store/config";
-import { AuthPage } from "./auth";
-import { getClientConfig } from "../config/client";
-import { type ClientApi, getClientApi } from "../client/api";
-import { useAccessStore } from "../store";
-import clsx from "clsx";
-import { initializeMcpSystem, isMcpEnabled } from "../mcp/actions";
-
-export function Loading(props: { noLogo?: boolean }) {
-  return (
-    <div className={clsx("no-dark", styles["loading-content"])}>
-      {!props.noLogo && <BotIcon />}
-      <LoadingIcon />
-    </div>
-  );
-}
-
-const Artifacts = dynamic(async () => (await import("./artifacts")).Artifacts, {
-  loading: () => <Loading noLogo />,
-});
-
-const Settings = dynamic(async () => (await import("./settings")).Settings, {
-  loading: () => <Loading noLogo />,
-});
-
-const Chat = dynamic(async () => (await import("./chat")).Chat, {
-  loading: () => <Loading noLogo />,
-});
-
-const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
-  loading: () => <Loading noLogo />,
-});
-
-const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
-  loading: () => <Loading noLogo />,
-});
-
-const PluginPage = dynamic(async () => (await import("./plugin")).PluginPage, {
-  loading: () => <Loading noLogo />,
-});
-
-const SearchChat = dynamic(
-  async () => (await import("./search-chat")).SearchChatPage,
-  {
-    loading: () => <Loading noLogo />,
-  },
-);
-
-const Sd = dynamic(async () => (await import("./sd")).Sd, {
-  loading: () => <Loading noLogo />,
-});
-
-const McpMarketPage = dynamic(
-  async () => (await import("./mcp-market")).McpMarketPage,
-  {
-    loading: () => <Loading noLogo />,
-  },
-);
-
-export function useSwitchTheme() {
-  const config = useAppConfig();
-
-  useEffect(() => {
-    document.body.classList.remove("light");
-    document.body.classList.remove("dark");
-
-    if (config.theme === "dark") {
-      document.body.classList.add("dark");
-    } else if (config.theme === "light") {
-      document.body.classList.add("light");
-    }
-
-    const metaDescriptionDark = document.querySelector(
-      'meta[name="theme-color"][media*="dark"]',
-    );
-    const metaDescriptionLight = document.querySelector(
-      'meta[name="theme-color"][media*="light"]',
-    );
-
-    if (config.theme === "auto") {
-      metaDescriptionDark?.setAttribute("content", "#151515");
-      metaDescriptionLight?.setAttribute("content", "#fafafa");
-    } else {
-      const themeColor = getCSSVar("--theme-color");
-      metaDescriptionDark?.setAttribute("content", themeColor);
-      metaDescriptionLight?.setAttribute("content", themeColor);
-    }
-  }, [config.theme]);
-}
-
-function useHtmlLang() {
-  useEffect(() => {
-    const lang = getISOLang();
-    const htmlLang = document.documentElement.lang;
-
-    if (lang !== htmlLang) {
-      document.documentElement.lang = lang;
-    }
-  }, []);
-}
-
-const useHasHydrated = () => {
-  const [hasHydrated, setHasHydrated] = useState<boolean>(false);
-
-  useEffect(() => {
-    setHasHydrated(true);
-  }, []);
-
-  return hasHydrated;
-};
-
-const loadAsyncGoogleFont = () => {
-  const linkEl = document.createElement("link");
-  const proxyFontUrl = "/google-fonts";
-  const remoteFontUrl = "https://fonts.googleapis.com";
-  const googleFontUrl =
-    getClientConfig()?.buildMode === "export" ? remoteFontUrl : proxyFontUrl;
-  linkEl.rel = "stylesheet";
-  linkEl.href =
-    googleFontUrl +
-    "/css2?family=" +
-    encodeURIComponent("Noto Sans:wght@300;400;700;900") +
-    "&display=swap";
-  document.head.appendChild(linkEl);
-};
-
-export function WindowContent(props: { children: React.ReactNode }) {
-  return (
-    <div className={styles["window-content"]} id={SlotID.AppBody}>
-      {props?.children}
-    </div>
-  );
-}
-
-function Screen() {
-  const config = useAppConfig();
-  const location = useLocation();
-  const isArtifact = location.pathname.includes(Path.Artifacts);
-  const isHome = location.pathname === Path.Home;
-  const isAuth = location.pathname === Path.Auth;
-  const isSd = location.pathname === Path.Sd;
-  const isSdNew = location.pathname === Path.SdNew;
-
-  const isMobileScreen = useMobileScreen();
-  const shouldTightBorder =
-    getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
-
-  useEffect(() => {
-    loadAsyncGoogleFont();
-  }, []);
-
-  if (isArtifact) {
-    return (
-      <Routes>
-        <Route path="/artifacts/:id" element={<Artifacts />} />
-      </Routes>
-    );
-  }
-  const renderContent = () => {
-    if (isAuth) return <AuthPage />;
-    if (isSd) return <Sd />;
-    if (isSdNew) return <Sd />;
-    return (
-      <>
-        <SideBar
-          className={clsx({
-            [styles["sidebar-show"]]: isHome,
-          })}
-        />
-        <WindowContent>
-          <Routes>
-            <Route path={Path.Home} element={<Chat />} />
-            <Route path={Path.NewChat} element={<NewChat />} />
-            <Route path={Path.Masks} element={<MaskPage />} />
-            <Route path={Path.Plugins} element={<PluginPage />} />
-            <Route path={Path.SearchChat} element={<SearchChat />} />
-            <Route path={Path.Chat} element={<Chat />} />
-            <Route path={Path.Settings} element={<Settings />} />
-            <Route path={Path.McpMarket} element={<McpMarketPage />} />
-          </Routes>
-        </WindowContent>
-      </>
-    );
-  };
-
-  return (
-    <div
-      className={clsx(styles.container, {
-        [styles["tight-container"]]: shouldTightBorder,
-        [styles["rtl-screen"]]: getLang() === "ar",
-      })}
-    >
-      {renderContent()}
-    </div>
-  );
-}
-
-export function useLoadData() {
-  const config = useAppConfig();
-
-  const api: ClientApi = getClientApi(config.modelConfig.providerName);
-
-  useEffect(() => {
-    (async () => {
-      const models = await api.llm.models();
-      config.mergeModels(models);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-}
+import { useState } from 'react';
 
 export function Home() {
-  useSwitchTheme();
-  useLoadData();
-  useHtmlLang();
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isActivated, setIsActivated] = useState(false); // 假设登录后状态
 
-  useEffect(() => {
-    console.log("[Config] got config from build time", getClientConfig());
-    useAccessStore.getState().fetch();
+  const handleActivate = async () => {
+    if (!code.trim()) {
+      setError('请输入激活码');
+      return;
+    }
 
-    const initMcp = async () => {
-      try {
-        const enabled = await isMcpEnabled();
-        if (enabled) {
-          console.log("[MCP] initializing...");
-          await initializeMcpSystem();
-          console.log("[MCP] initialized");
-        }
-      } catch (err) {
-        console.error("[MCP] failed to initialize:", err);
+    setLoading(true);
+    setError('');
+
+    try {
+      // 调用你的后端 API 验证激活码（根据你的项目改 URL）
+      const res = await fetch('/api/activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setIsActivated(true); // 激活成功，显示聊天界面
+        // 可选：存 localStorage 或 cookie
+        localStorage.setItem('token', code); // 简单示例，实际用更安全方式
+      } else {
+        setError(data.message || '激活码无效或已过期');
       }
-    };
-    initMcp();
-  }, []);
+    } catch (err) {
+      setError('网络错误，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (!useHasHydrated()) {
-    return <Loading />;
+  // 如果已激活，显示聊天界面（替换成你原来的聊天组件）
+  if (isActivated) {
+    return (
+      <div className="h-screen flex flex-col">
+        <header className="bg-green-600 text-white p-4 text-center">
+          <h1 className="text-2xl font-bold">BingZe Token Chat - 已激活</h1>
+        </header>
+        <main className="flex-1 p-4 overflow-auto">
+          {/* 这里放你原来的聊天 UI */}
+          <p>聊天界面加载中...</p>
+        </main>
+      </div>
+    );
   }
 
+  // 未激活：显示登录/激活页
   return (
-    <ErrorBoundary>
-      <Router>
-        <Screen />
-      </Router>
-    </ErrorBoundary>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 px-4">
+      <div className="max-w-lg w-full bg-white p-10 rounded-3xl shadow-2xl border border-gray-200">
+        <div className="text-center mb-10">
+          <h1 className="text-5xl font-extrabold text-gray-900">BingZe Token</h1>
+          <p className="mt-4 text-xl text-gray-700">
+            无限 DeepSeek 聊天 · 仅 $9.9/月起
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <input
+            type="text"
+            placeholder="输入你的激活码 (例如 BTC-XXXX-YYYY-ZZZZ)"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="w-full px-6 py-5 border-2 border-gray-300 rounded-2xl text-xl focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-200 transition-all"
+          />
+
+          <button
+            onClick={handleActivate}
+            disabled={loading || !code.trim()}
+            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-5 rounded-2xl text-xl font-bold shadow-lg disabled:opacity-50 transition-all duration-200 flex items-center justify-center"
+          >
+            {loading ? '激活中...' : '立即激活并登录'}
+          </button>
+
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-xl text-center">
+              {error}
+            </div>
+          )}
+
+          <p className="text-center text-gray-600 mt-6 text-lg">
+            没有激活码？{' '}
+            <a
+              href="你的 Gumroad 链接"
+              target="_blank"
+              className="text-blue-600 font-bold hover:text-blue-800 underline"
+            >
+              立即购买
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
