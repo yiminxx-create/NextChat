@@ -106,3 +106,12 @@ export function Home() {
     </div>
   );
 }
+// 在 home.tsx 文件末尾添加（如果没有就新建）
+export const Loading = () => {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+      <span className="ml-4 text-lg text-gray-600">加载中...</span>
+    </div>
+  );
+};
