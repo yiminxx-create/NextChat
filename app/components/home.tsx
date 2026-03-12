@@ -156,3 +156,38 @@ export const Loading = () => {
     </div>
   );
 };
+// 在 home.tsx 文件末尾添加（放在 export default Home 之后或之前都行）
+export const WindowContent = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-white rounded-2xl shadow-inner border border-gray-200">
+      {/* 头部（可选：标题、模型选择） */}
+      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold">DeepSeek Chat</h2>
+        <span className="text-sm opacity-80">无限对话 · BingZe Token</span>
+      </div>
+
+      {/* 聊天内容区域 */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {children || (
+          <div className="flex items-center justify-center h-full text-gray-500">
+            <p>Lets's chat ...</p>
+          </div>
+        )}
+      </div>
+
+      {/* 底部输入框（如果需要） */}
+      <div className="border-t border-gray-200 p-4 bg-gray-50">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            placeholder="输入消息..."
+            className="flex-1 px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
+          />
+          <button className="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-700 transition">
+            发送
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
