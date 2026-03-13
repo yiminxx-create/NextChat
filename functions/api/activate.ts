@@ -1,3 +1,15 @@
+// functions/api/activate.ts
+interface RequestContext {
+  request: Request;
+  // 可以加更多属性，如 env, params 等，如果需要
+}
+
+export const onRequestPost = async (context: RequestContext) => {
+  const { request } = context;
+
+  // 你的原有代码...
+  // ... 后面不变
+};
 // functions/api/activate.ts - Activation Code Verification (Cloudflare Pages Functions)
 
 export const onRequestPost = async (context) => {
