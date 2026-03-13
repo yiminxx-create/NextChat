@@ -8,6 +8,12 @@ console.log("[Next] build with chunk: ", !disableChunk);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    env: {
+    CODE: "BZ888",
+    HIDE_USER_CONTROL: "1",
+    NEXT_PUBLIC_ENABLE_USER_MANAGEMENT: "false",
+  },
+
   webpack(config) {
     config.cache = false;
     config.module.rules.push({
