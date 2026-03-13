@@ -25,7 +25,17 @@ export default function Home() {
 
     setLoading(true);
     setError('');
+ // 临时假激活（手动阶段用）
+  if (code.startsWith('BTC-')) {
+    localStorage.setItem('activation_token', code);
+    setIsActivated(true);
+    console.log('手动激活成功：', code);
+  } else {
+    setError('Invalid code. Please use a BTC-260313 code.');
+  }
 
+  setLoading(false);
+};
     try {
       const res = await fetch('/api/activate', {
         method: 'POST',
