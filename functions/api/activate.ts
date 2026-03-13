@@ -1,8 +1,10 @@
 // functions/api/activate.ts - Activation Code Verification (Cloudflare Pages Functions)
 
-type RequestContext = {
+interface RequestContext {
   request: Request;
-  export const onRequestPost = async (context) => {
+}
+
+export const onRequestPost = async (context: RequestContext) => {
   const { request } = context;
 
   // CORS headers (允许前端调用)
