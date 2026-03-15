@@ -8,8 +8,10 @@ console.log("[Next] build with chunk: ", !disableChunk);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    env: {
+      env: {
     CODE: "BZ888",
+    BASE_URL: "https://api.deepseek.com", // 加上这一行
+    OPENAI_API_KEY: "你的sk-密钥", // 加上这一行
     HIDE_USER_CONTROL: "1",
     NEXT_PUBLIC_ENABLE_USER_MANAGEMENT: "false",
   },
